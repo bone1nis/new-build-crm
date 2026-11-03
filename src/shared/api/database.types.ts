@@ -8,6 +8,7 @@ export type Database = {
           address: string
           created_at: string
           created_by: string
+          deleted_at: string | null
           id: string
           name: string
         }
@@ -16,6 +17,7 @@ export type Database = {
           address: string
           created_at?: string
           created_by?: string
+          deleted_at?: string | null
           id?: string
           name: string
         }
@@ -23,6 +25,7 @@ export type Database = {
           address?: string
           created_at?: string
           created_by?: string
+          deleted_at?: string | null
           id?: string
           name?: string
         }
@@ -109,6 +112,7 @@ export type Database = {
           assignee_id: string
           author_id: string
           created_at: string
+          deleted_at: string | null
           description: string
           id: string
           object_id: string
@@ -121,6 +125,7 @@ export type Database = {
           assignee_id: string
           author_id?: string
           created_at?: string
+          deleted_at?: string | null
           description?: string
           id?: string
           object_id: string
@@ -132,6 +137,7 @@ export type Database = {
           assignee_id?: string
           author_id?: string
           created_at?: string
+          deleted_at?: string | null
           description?: string
           id?: string
           object_id?: string
@@ -178,6 +184,7 @@ export type Database = {
           assignee_id: string
           author_id: string
           created_at: string
+          deleted_at: string | null
           description: string
           id: string
           object_id: string
@@ -192,6 +199,8 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      delete_object: { Args: { p_object_id: string }; Returns: undefined }
+      delete_task: { Args: { p_task_id: string }; Returns: undefined }
     }
     Enums: {
       task_status: 'new' | 'in_progress' | 'review' | 'rework' | 'accepted'

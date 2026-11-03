@@ -55,8 +55,8 @@ export const DeleteObjectButton = ({ object, onDeleted }: DeleteObjectButtonProp
         <AlertDialogHeader>
           <AlertDialogTitle>Удалить объект «{object.name}»?</AlertDialogTitle>
           <AlertDialogDescription>
-            Вместе с объектом будут удалены все его задачи и история их статусов. Это действие
-            нельзя отменить.
+            Объект «{object.name}» и все его задачи будут удалены. История изменений задач
+            сохранится в системе.
           </AlertDialogDescription>
         </AlertDialogHeader>
         {remove.isError && (

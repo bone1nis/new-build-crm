@@ -50,8 +50,7 @@ export const DeleteTaskButton = ({ task, onDeleted }: DeleteTaskButtonProps) => 
         <AlertDialogHeader>
           <AlertDialogTitle>Удалить задачу?</AlertDialogTitle>
           <AlertDialogDescription>
-            Задача «{task.title}» и вся её история изменений будут удалены без возможности
-            восстановления.
+            Задача «{task.title}» будет удалена. История её изменений сохранится в системе.
           </AlertDialogDescription>
         </AlertDialogHeader>
         {remove.isError && (

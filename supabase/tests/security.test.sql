@@ -57,7 +57,9 @@ select throws_ok($$update public.tasks set status = 'accepted' where id = '00000
 select lives_ok($$update public.tasks set title = 'x' where id = '00000000-0000-0000-0000-00000000d001'$$, 'update исполнителя не падает, но ничего не меняет');
 select throws_ok($$insert into public.tasks (title, object_id, assignee_id) values ('x', '00000000-0000-0000-0000-00000000c001', '00000000-0000-0000-0000-00000000b001')$$, '42501', null, 'исполнитель не создаёт задачи');
 select throws_ok($$insert into public.objects (name, address) values ('x', 'y')$$, '42501', null, 'исполнитель не создаёт объекты');
-select lives_ok($$delete from public.tasks where id = '00000000-0000-0000-0000-00000000d001'$$, 'delete исполнителя не падает, но ничего не удаляет');
+select throws_ok($$delete from public.tasks where id = '00000000-0000-0000-0000-00000000d001'$$, '42501', null, 'исполнитель не удаляет задачи напрямую');
+select throws_ok($$select public.delete_task('00000000-0000-0000-0000-00000000d001')$$, '42501', 'forbidden', 'исполнитель не удаляет задачи через RPC');
+select throws_ok($$select public.delete_object('00000000-0000-0000-0000-00000000c001')$$, '42501', 'forbidden', 'исполнитель не удаляет объекты через RPC');
 select throws_ok($$insert into public.task_status_history (task_id, to_status, changed_by) values ('00000000-0000-0000-0000-00000000d001', 'accepted', '00000000-0000-0000-0000-00000000b001')$$, '42501', null, 'запись в историю запрещена');
 select throws_ok($$update public.task_status_history set comment = 'x'$$, '42501', null, 'изменение истории запрещено');
 select throws_ok($$delete from public.task_status_history$$, '42501', null, 'удаление истории запрещено');
@@ -103,10 +105,22 @@ select is((select author_id from public.tasks where title = 'Новая'), '0000
 select is((select status from public.tasks where title = 'Новая'), 'new'::public.task_status, 'стартовый статус - new');
 select is((select count(*) from public.task_status_history h join public.tasks t on t.id = h.task_id where t.title = 'Новая' and h.from_status is null and h.to_status = 'new'), 1::bigint, 'первая запись истории создана триггером');
 
-select lives_ok($$delete from public.tasks where title = 'Новая'$$, 'постановщик удаляет задачу');
-select is((select count(*) from public.tasks where title = 'Новая'), 0::bigint, 'задача удалена');
-select is((select count(*) from public.task_status_history), 6::bigint, 'история удалённой задачи ушла вместе с ней, остальная осталась');
+select throws_ok($$delete from public.tasks where title = 'Новая'$$, '42501', null, 'прямое удаление задачи запрещено даже постановщику');
+select lives_ok($$select public.delete_task((select id from public.tasks where title = 'Новая'))$$, 'постановщик удаляет задачу через RPC');
+select is((select count(*) from public.tasks where title = 'Новая'), 0::bigint, 'удалённая задача скрыта');
+select is((select count(*) from public.task_status_history), 6::bigint, 'история остальных задач на месте');
+
+select lives_ok($$select public.delete_object('00000000-0000-0000-0000-00000000c002')$$, 'постановщик удаляет объект через RPC');
+select is((select count(*) from public.objects), 1::bigint, 'удалённый объект скрыт');
+select is((select count(*) from public.tasks where object_id = '00000000-0000-0000-0000-00000000c002'), 0::bigint, 'задачи удалённого объекта скрыты');
+select throws_ok($$insert into public.tasks (title, object_id, assignee_id) values ('x', '00000000-0000-0000-0000-00000000c002', '00000000-0000-0000-0000-00000000b001')$$, '42501', null, 'нельзя создать задачу на удалённом объекте');
+select throws_ok($$select public.delete_object('00000000-0000-0000-0000-00000000c002')$$, 'P0002', 'object_not_found', 'повторное удаление объекта: не найден');
+select throws_ok($$delete from public.objects$$, '42501', null, 'прямое удаление объектов запрещено');
 reset role;
+
+select is((select count(*) from public.tasks where title = 'Новая' and deleted_at is not null), 1::bigint, 'удалённая задача осталась в базе');
+select is((select count(*) from public.task_status_history h join public.tasks t on t.id = h.task_id where t.title = 'Новая'), 1::bigint, 'история удалённой задачи сохранена');
+select is((select count(*) from public.tasks where object_id = '00000000-0000-0000-0000-00000000c002' and deleted_at is not null), 2::bigint, 'задачи удалённого объекта помечены удалёнными, а не стёрты');
 
 select * from finish();
 rollback;

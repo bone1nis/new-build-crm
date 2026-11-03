@@ -16,6 +16,7 @@ const MESSAGE_BY_CODE: Record<string, string> = {
   comment_required: 'Укажите комментарий',
   forbidden: 'Это действие вам недоступно',
   task_not_found: 'Задача не найдена или недоступна',
+  object_not_found: 'Объект не найден или уже удалён',
   auth_required: 'Нужно войти заново',
   assignee_must_be_executor: 'Исполнителем может быть только пользователь с ролью исполнителя',
 }

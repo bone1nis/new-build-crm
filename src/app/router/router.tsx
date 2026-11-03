@@ -1,17 +1,17 @@
 import { createBrowserRouter } from 'react-router'
-import { LoginPage } from '@/pages/login'
-import { MyTasksPage } from '@/pages/my-tasks'
 import { NotFoundPage } from '@/pages/not-found'
-import { ObjectDetailsPage } from '@/pages/object-details'
-import { ObjectsPage } from '@/pages/objects'
-import { TaskDetailsPage } from '@/pages/task-details'
 import { AppLayout } from '../layouts/AppLayout'
 import { GuestOnly, RequireAuth, RequireRole } from './guards'
 
 export const router = createBrowserRouter([
   {
     element: <GuestOnly />,
-    children: [{ path: '/login', element: <LoginPage /> }],
+    children: [
+      {
+        path: '/login',
+        lazy: async () => ({ Component: (await import('@/pages/login')).LoginPage }),
+      },
+    ],
   },
   {
     element: <RequireAuth />,
@@ -19,12 +19,30 @@ export const router = createBrowserRouter([
       {
         element: <AppLayout />,
         children: [
-          { index: true, element: <ObjectsPage /> },
-          { path: 'objects/:objectId', element: <ObjectDetailsPage /> },
-          { path: 'tasks/:taskId', element: <TaskDetailsPage /> },
+          {
+            index: true,
+            lazy: async () => ({ Component: (await import('@/pages/objects')).ObjectsPage }),
+          },
+          {
+            path: 'objects/:objectId',
+            lazy: async () => ({
+              Component: (await import('@/pages/object-details')).ObjectDetailsPage,
+            }),
+          },
+          {
+            path: 'tasks/:taskId',
+            lazy: async () => ({
+              Component: (await import('@/pages/task-details')).TaskDetailsPage,
+            }),
+          },
           {
             element: <RequireRole role="executor" />,
-            children: [{ path: 'my-tasks', element: <MyTasksPage /> }],
+            children: [
+              {
+                path: 'my-tasks',
+                lazy: async () => ({ Component: (await import('@/pages/my-tasks')).MyTasksPage }),
+              },
+            ],
           },
         ],
       },

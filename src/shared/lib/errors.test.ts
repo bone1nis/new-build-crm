@@ -8,6 +8,7 @@ describe('getErrorMessage', () => {
     )
     expect(getErrorMessage({ message: 'comment_required' })).toBe('Укажите комментарий')
     expect(getErrorMessage({ message: 'forbidden' })).toBe('Это действие вам недоступно')
+    expect(getErrorMessage({ message: 'object_not_found' })).toBe('Объект не найден или уже удалён')
   })
 
   it('понимает отсутствие прав и пустой результат RLS', () => {
