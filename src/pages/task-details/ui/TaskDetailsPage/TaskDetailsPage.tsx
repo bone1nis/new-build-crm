@@ -3,8 +3,10 @@ import type { ReactNode } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
 import { useSession } from '@/entities/session'
 import { TaskStatusBadge, useTask } from '@/entities/task'
+import { TaskStatusActions } from '@/features/change-task-status'
 import { DeleteTaskButton, TaskFormDialog } from '@/features/task-form'
 import { formatDateTime, getErrorMessage } from '@/shared/lib'
+import { TaskHistory } from '@/widgets/task-history'
 import {
   Alert,
   AlertDescription,
@@ -115,6 +117,8 @@ export const TaskDetailsPage = () => {
           </dl>
         </CardContent>
       </Card>
+      <TaskStatusActions task={data} />
+      <TaskHistory taskId={data.id} />
     </div>
   )
 }

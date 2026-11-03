@@ -17,3 +17,12 @@ export interface Task {
   assignee: TaskPerson
   author: TaskPerson
 }
+
+export interface TaskHistoryEntry {
+  id: number
+  fromStatus: TaskStatus | null
+  toStatus: TaskStatus
+  comment: string | null
+  createdAt: string
+  changedBy: TaskPerson
+}
