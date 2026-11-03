@@ -18,7 +18,7 @@
     "db:stop": "supabase stop",
     "db:test": "supabase test db",
     "db:push": "supabase db push --remote",
-    "db:types": "supabase gen types typescript --remote --schema public > src/shared/api/database.types.ts"
+    "db:types": "supabase gen types typescript --remote --schema public > src/shared/api/database.types.ts && prettier --write src/shared/api/database.types.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^7.0.2",

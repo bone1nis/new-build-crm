@@ -1,0 +1,1 @@
+export { DeleteObjectButton } from './DeleteObjectButton'
