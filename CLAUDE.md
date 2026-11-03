@@ -10,7 +10,9 @@
 
 ## Стек
 
-React 19, TypeScript, Vite, SCSS, Supabase, TanStack Query, React Router, Zustand (только UI-состояние: тема), Vitest. Менеджер пакетов - pnpm, Node ≥ 20 (`nvm use`).
+React 19, TypeScript, Vite, Tailwind CSS v4, shadcn/ui (radix), lucide-react, React Hook Form + Zod, Supabase, TanStack Query, React Router, Zustand (только UI-состояние: тема), Vitest. Менеджер пакетов - pnpm, Node ≥ 20 (`nvm use`).
+
+SCSS, БЭМ, SVGR и самописные CSS-переменные (`--bg`, `--paper`) не используются.
 
 ## Структура
 
@@ -32,8 +34,9 @@ src/               фронтенд по Feature-Sliced Design
 - `widgets/` - блоки интерфейса (шапка, список задач, история).
 - `features/` - сценарии: вход/выход, форма объекта, форма задачи, смена статуса, переключение темы.
 - `entities/` - `object`, `task`, `profile`, `session`: типы, правила, запросы.
-- `shared/` - без знания о домене: `ui/`, `lib/`, `api/` (клиент Supabase и `database.types.ts`), `assets/icons/` (SVG через SVGR).
-- Каждый компонент - отдельная папка: `Name/Name.tsx`, `Name/Name.scss`, `Name/index.ts`.
+- `shared/` - без знания о домене: `ui/` (shadcn-компоненты и общие компоненты вроде `TextField`, `EmptyState`), `lib/` (`cn`), `api/` (клиент Supabase и `database.types.ts`). Иконки - из `lucide-react`.
+- Каждый свой компонент - отдельная папка: `Name/Name.tsx`, `Name/index.ts`.
+- Сгенерированные shadcn-компоненты лежат плоско в `src/shared/ui/*.tsx` (алиасы в `components.json`), остаются как сгенерированы: функции-объявления там допустимы, правило `react-refresh/only-export-components` для них отключено.
 
 ## Безопасность (главное правило)
 
@@ -56,7 +59,7 @@ src/               фронтенд по Feature-Sliced Design
 ## Код
 
 - Функции и компоненты объявлять через `const` (стрелочные), без `function`.
-- Без комментариев, если они не необходимы; в SQL - короткий комментарий «зачем» над объектом, если не очевидно.
+- Комментарии в коде не писать вообще (ни в TS, ни в SQL), только в редких случаях, когда без них не обойтись.
 - Никакого `any`; `unknown` + сужение типов для внешних данных. Без небезопасных `as` и `!` - type guards.
 - Только функциональные компоненты и хуки; производные значения вычислять, а не хранить; зависимости эффектов указывать корректно.
 - Небольшие компоненты с одной ответственностью, логика отдельно от представления. UI-компоненты из `shared` не импортируют доменный код.
@@ -64,9 +67,12 @@ src/               фронтенд по Feature-Sliced Design
 
 ## UI
 
-- Дизайн и темы - как в эталоне `task-list-plus`: светлая/тёмная тема через `data-theme` и CSS-переменные из `app/styles/global.scss`, цвета только через токены, никаких «голых» hex в компонентах.
-- Стили - SCSS рядом с компонентом, БЭМ-именование.
-- Семантический HTML, доступность с клавиатуры, `aria-*` где нужно; состояния hover / focus-visible / active / disabled; адаптивность ≤ 480px; анимации уважают `prefers-reduced-motion`.
+- Дизайн и темы - как в эталоне `task-list-plus`. Стили только Tailwind-классами и токенами shadcn (`bg-background`, `text-muted-foreground`, `border-border` и т.д.), никаких «голых» hex в компонентах.
+- Токены цвета заданы в `src/app/styles/index.css` на палитре эталона: светлая тема в `:root`, тёмная в `.dark`.
+- Тема переключается классом `dark` на `<html>` через zustand-стор `features/toggle-theme`; мигания нет благодаря скрипту в `index.html`.
+- Новые shadcn-компоненты добавляются командой `pnpm dlx shadcn@latest add <имя> -y`. Запускать в фоне и с `</dev/null`, иначе CLI виснет на ожидании ввода.
+- Формы: `useForm` + `zodResolver`, схема Zod лежит в `model/` фичи, ошибки выводятся через `TextField` из `shared/ui`.
+- Семантический HTML, доступность с клавиатуры, `aria-*` где нужно; состояния hover / focus-visible / disabled; адаптивность ≤ 480px; анимации уважают `prefers-reduced-motion`.
 - У каждого экрана есть состояния загрузки, пустого списка и ошибки.
 
 ## Тесты

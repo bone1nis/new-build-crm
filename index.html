@@ -9,7 +9,9 @@
     <script>
       const saved = JSON.parse(localStorage.getItem('mini-crm.theme') || '{}')
       const system = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-      document.documentElement.dataset.theme = saved.state?.theme ?? system
+      const theme = saved.state?.theme ?? system
+      document.documentElement.classList.toggle('dark', theme === 'dark')
+      document.documentElement.style.colorScheme = theme
     </script>
   </head>
   <body>

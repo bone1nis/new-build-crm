@@ -22,7 +22,7 @@ export const useThemeStore = create<ThemeState>()(
 )
 
 const applyTheme = ({ theme }: ThemeState) => {
-  document.documentElement.dataset.theme = theme
+  document.documentElement.classList.toggle('dark', theme === 'dark')
 }
 
 applyTheme(useThemeStore.getState())

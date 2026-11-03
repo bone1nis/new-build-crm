@@ -2,13 +2,14 @@
 
 CRM для строительной компании: постановщик ставит задачи по объектам, исполнитель берёт их в работу и отправляет на проверку.
 
-Стек: React 19 · TypeScript · Vite · SCSS · Supabase · TanStack Query · React Router · Vitest.
+Стек: React 19 · TypeScript · Vite · Tailwind CSS · shadcn/ui · React Hook Form · Zod · Supabase · TanStack Query · React Router · Vitest.
 
 ## Запуск
 
-Нужны Node ≥ 20.19 (`nvm use`) и [pnpm](https://pnpm.io).
+Нужны Node ≥ 20.19 и [pnpm](https://pnpm.io).
 
 ```bash
+nvm use
 pnpm install
 cp .env.example .env.local   # вписать URL и publishable key проекта Supabase
 pnpm dev

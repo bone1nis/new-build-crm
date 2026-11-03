@@ -7,7 +7,7 @@ import tseslint from 'typescript-eslint'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
-  globalIgnores(['dist']),
+  globalIgnores(['dist', 'src/shared/api/database.types.ts']),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
@@ -24,5 +24,9 @@ export default defineConfig([
       '@typescript-eslint/no-explicit-any': 'error',
       'no-console': 'error',
     },
+  },
+  {
+    files: ['src/shared/ui/*.tsx'],
+    rules: { 'react-refresh/only-export-components': 'off' },
   },
 ])
